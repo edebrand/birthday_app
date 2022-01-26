@@ -13,10 +13,11 @@
                 <h1 class="title">Anniversaires</h1>
                 <img class="gifts_img" src="img/gifts.png"/>
             </header>
-            <div class="search_bar">
-                <input class="bar" name="search" type="text">
-            </div>
-            <div class="list">
+            <!-- SEARCH FORM -->
+            <form class="search_bar" action="index.php" method="post">
+            <input class="bar" name="search" type="search" required/>
+            </form>
+            <div id="list" class="list">
                 <?php
                 try
                 {
@@ -29,9 +30,18 @@
                     die('Erreur : '.$e->getMessage());
                 }
 
-                    // Si tout va bien, on peut continuer
-                $sqlQuery = "SELECT surname, first_name, dob,img,id, DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 AS Age, (365.25 - (TIMESTAMPDIFF(day, dob, CURDATE()) mod 365.25)) AS days from table_birthdays order by surname ASC";
-                $user = $db->prepare($sqlQuery);
+                if (!isset($_POST["search"]) || $_POST["search"] == "") {
+                    $sqlQuery = "SELECT surname, first_name, dob,img,id, DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 AS Age, (365.25 - (TIMESTAMPDIFF(day, dob, CURDATE()) mod 365.25)) AS days from table_birthdays order by surname ASC";
+                    $user = $db->prepare($sqlQuery);
+                }
+                    else {
+                        $sqlQuery = "SELECT surname, first_name, dob,img,id, DATE_FORMAT(FROM_DAYS(DATEDIFF(now(),dob)), '%Y')+0 AS Age, (365.25 - (TIMESTAMPDIFF(day, dob, CURDATE()) mod 365.25)) AS days from table_birthdays WHERE surname LIKE :ls OR first_name LIKE :fs order by surname ASC";
+                        $user = $db->prepare($sqlQuery);
+                        $q = "%" . $_POST["search"] . "%";
+                        $user->bindParam(':ls', $q);
+                        $user->bindParam(':fs', $q, PDO::PARAM_STR);?>
+                        <a class="return_home" href="index.php">retour à la liste<a>
+                    <?php }
                 $user->execute();
                 $lists = $user->fetchAll();
                 // On affiche chaque nom un à un
@@ -53,6 +63,7 @@
                             </div>
                         </a>
                     </div>
+                
                 <?php }?>
             </div>
             <footer class="footer_main">

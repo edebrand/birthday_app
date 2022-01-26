@@ -9,7 +9,7 @@
     </head>
     <body>
         <?php 
-            $id = $_GET['id'];
+            $id = $_REQUEST['id'];
             try
             {
                 // On se connecte à MySQL
@@ -27,8 +27,7 @@
             $user->execute();
             $lists = $user->fetchAll();
         ?>
-        
-        
+             
         <?php
         foreach ($lists as $list) {?>
             <header>
@@ -77,6 +76,7 @@
                 <script>
                     function deleteme(delid) {
                         window.location.href='delete.php?del_id=' +delid+'';
+                        return true;
                     }
                 </script>
 

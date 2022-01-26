@@ -12,7 +12,6 @@
     $sql = "DELETE FROM table_birthdays WHERE id =' " . $_GET['del_id'] . "'";
     $del= $db->prepare($sql);
     $exec = $del->execute();
-    var_dump ($exec);
     if ($exec = true) {
-        header ('location: success.php');
+        header ('location: success_delete.php');
     }
